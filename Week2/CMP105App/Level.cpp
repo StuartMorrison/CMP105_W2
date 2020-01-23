@@ -1,5 +1,7 @@
 #include "Level.h"
+#include <cmath>
 
+int oldX, oldY, newX, newY, distance = 0, squaredD = 0, x, y;
 
 Level::Level(sf::RenderWindow* hwnd, Input* in)
 {
@@ -41,12 +43,32 @@ void Level::handleInput()
 		window->close();
 	}
 
+	if (input->isMouseLDown())
+	{
+		
+		newX = x;
+		newY = y;
+		
+	}
+
+	if (!input->isMouseLDown())
+	{
+		oldX = x;
+		oldY = y;
+
+	}
+
 	
 }
 
 // Update game objects
 void Level::update()
 {
+
+	distance = ((newX - oldX) * (newX - oldX)) + ((newY - oldY) * (newY - oldY));
+
+	squaredD = sqrt(distance);
+	
 
 }
 
@@ -55,15 +77,38 @@ void Level::render()
 {
 	
 	beginDraw();
-	int x = input->getMouseX();
-	int y = input->getMouseY();
-	int test = 0;
-	//std::string output("The X coord is", x);
-	//std::string output2("The Y coord is ", y);
-	std::cout << x;
-	std::cout << y;
+
+	//render text
+	if (!font.loadFromFile("font/arial.ttf"))
+	{
+		std::cout << "Error loading font\n";
+	}
+
+	x = input->getMouseX();
+	y = input->getMouseY();
+
+	std::string xVal = std::to_string(x);
+	std::string yVal = std::to_string(y);
+	std::string dVal = std::to_string(squaredD);
+
+	text.setFont(font);
+	text.setString(xVal + ", " + yVal);
+	text.setCharacterSize(24);
+	text.setFillColor(sf::Color::Red);
+	text.setPosition(0, 0);
+
+	if (input->isMouseLDown())
+	{
+		displayDist.setFont(font);
+		displayDist.setString(dVal);
+		displayDist.setCharacterSize(24);
+		displayDist.setFillColor(sf::Color::Red);
+		displayDist.setPosition(0, 25);
+	}
+
 	
-	//std::cout << output;
+	window->draw(text);
+	window->draw(displayDist);
 	endDraw();
 }
 
